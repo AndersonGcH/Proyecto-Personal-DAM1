@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center_horizontal"
+    android:background="#2E7D32"
+    tools:context=".AgregarActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AGREGAR TRANSACCIÓN"
+        android:textColor="@android:color/black"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilMonto"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Monto"
+        app:boxStrokeColor="#c9981e"
+        app:hintTextColor="#c9981e">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tietMonto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:textColor="#FFFFFF"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilDescripcion"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Descripción"
+        app:boxStrokeColor="#c9981e"
+        app:hintTextColor="#c9981e">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tietDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:textColor="#FFFFFF"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilCategoria"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="Categoría"
+        app:boxStrokeColor="#c9981e"
+        app:hintTextColor="#c9981e">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tietCategoria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"
+            android:textColor="#FFFFFF"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Tipo de Transacción"
+        android:textColor="@color/black"
+        android:textSize="16sp"/>
+
+    <RadioGroup
+        android:id="@+id/rgTipoTransaccion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center">
+
+        <RadioButton
+            android:id="@+id/rbIngreso"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ingreso"
+            android:textColor="@color/black"
+            android:checked="true"
+            android:buttonTint="#c9981e"/>
+
+        <RadioButton
+            android:id="@+id/rbGasto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:text="Gasto"
+            android:textColor="@color/black"
+            android:buttonTint="#c9981e"/>
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btnGuardarTransaccion"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:text="Guardar Transacción"
+        android:backgroundTint="#CDA434"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/btnPrincipal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="5dp"
+        android:backgroundTint="#CDA434"
+        android:text="Volver al Menú Principal"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+</LinearLayout>

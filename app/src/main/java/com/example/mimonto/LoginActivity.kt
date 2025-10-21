@@ -1,92 +1,60 @@
 package com.example.mimonto
-
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.mimonto.entity.Usuario
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
+import androidx.lifecycle.lifecycleScope
+import com.example.mimonto.data.DBHelper
+import com.example.mimonto.databinding.ActivityLoginBinding
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
-
-    private lateinit var tietCorreo : TextInputEditText
-    private lateinit var tietClave : TextInputEditText
-    private lateinit var tilCorreo : TextInputLayout
-    private lateinit var tilClave : TextInputLayout
-    private lateinit var btnAcceso : Button
-
-    private val listaUsuarios = mutableListOf(
-        Usuario(1, "Anderson Gioel", "Cutipa Higinio", "agcutipa@cibertec.edu.pe", "1234"),
-        Usuario(2, "Nombres", "Apellidos", "prueba@cibertec.edu.pe", "1234")
-    )
+    private lateinit var db: DBHelper
+    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        tietCorreo = findViewById(R.id.tietCorreo)
-        tietClave = findViewById(R.id.tietClave)
-        tilCorreo = findViewById(R.id.tilCorreo)
-        tilClave = findViewById(R.id.tilClave)
-        btnAcceso = findViewById(R.id.btnInicio)
+        db = DBHelper.getDatabase(this)
 
-        btnAcceso.setOnClickListener {
-            validarCampos()
+        setupListeners()
+    }
+    private fun setupListeners() {
+        binding.btnInicio.setOnClickListener {
+            iniciarSesion()
+        }
+
+        binding.btnRegistro.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
         }
     }
+    private fun iniciarSesion() {
+        val correo = binding.tietCorreo.text.toString().trim()
+        val clave = binding.tietClave.text.toString().trim()
 
-    fun validarCampos() {
-        val correo = tietCorreo.text.toString().trim()
-        val clave = tietClave.text.toString().trim()
-        var error : Boolean = false
-        if (correo.isEmpty()) {
-            tilCorreo.error = "Ingrese un correo"
-            error = true
-        } else {
-            tilCorreo.error = ""
-        }
-        if (clave.isEmpty()) {
-            tilClave.error = "Ingrese contraseña"
-            error = true
-        } else {
-            tilClave.error = ""
-        }
-
-        if (error) {
+        if (correo.isEmpty() || clave.isEmpty()) {
+            Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
             return
-        } else {
-            var usuarioEncontrado : Usuario?= null
-            for (u in listaUsuarios) {
-                if (u.correo == correo + "@cibertec.edu.pe" && u.clave == clave) {
-                    usuarioEncontrado = u
-                    break
+        }
+
+        lifecycleScope.launch {
+            val usuario = db.usuarioDao().login(correo, clave)
+
+            runOnUiThread {
+                if (usuario == null) {
+                    Toast.makeText(this@LoginActivity, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@LoginActivity, "Bienvenido ${usuario.nombres}", Toast.LENGTH_SHORT).show()
+
+                    val intent = Intent(this@LoginActivity, PrincipalActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
                 }
             }
-
-            if (usuarioEncontrado != null) {
-                Toast.makeText(this, "Bienvenido ${usuarioEncontrado.nombres}", Toast.LENGTH_LONG).show()
-                startActivity(Intent(this, PrincipalActivity::class.java))
-            } else {
-                Toast.makeText(this, "Usuario o contraseña incorrectos", Toast.LENGTH_LONG).show()
-                mostrarDialogoError()
-            }
         }
-    }
-
-    private fun mostrarDialogoError() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Error de Acceso")
-            .setMessage("El correo electrónico o la contraseña que ingresaste no son correctos. Por favor, verifica tus datos e inténtalo de nuevo.")
-            .setPositiveButton("Entendido") { dialog, which ->
-                dialog.dismiss()
-            }
-            .show()
     }
 }

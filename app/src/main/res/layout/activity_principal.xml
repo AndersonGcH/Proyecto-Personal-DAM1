@@ -3,11 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@color/verde1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#2E7D32"
     tools:context=".PrincipalActivity">
-
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -19,10 +18,11 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Mis Gastos"
+            android:background="#CDA434"
+            app:title="MiMonto"
             app:titleCentered="true"
             app:titleTextColor="@android:color/black"
-            android:background="@android:color/white"/>
+            android:textStyle="bold"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -42,30 +42,93 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:background="@color/black"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
             android:padding="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Tu balance actual"
-                android:textSize="16sp"
+                android:text="Tu Balance Actual"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:text="$1,250"
+                android:textColor="@color/white"
                 android:textSize="36sp"
                 android:textStyle="bold"
-                android:textColor="@color/white" />
+                tools:text="S/ 1,250.00" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_summary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="@id/card_balance"
+        app:layout_constraintStart_toStartOf="@id/card_balance"
+        app:layout_constraintTop_toBottomOf="@id/card_balance">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="16dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ingresos"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tv_total_ingresos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#388E3C"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="S/ 2,000.00" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gastos"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tv_total_gastos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#D32F2F"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="S/ 750.00" />
+            </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -76,12 +139,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
-        android:text="AGREGAR TRANSACCIÓN"
         android:padding="12dp"
+        android:text="AGREGAR TRANSACCIÓN"
         app:icon="@drawable/ic_historial"
         app:layout_constraintEnd_toStartOf="@+id/btn_ver_historial"
         app:layout_constraintStart_toStartOf="@+id/card_balance"
-        app:layout_constraintTop_toBottomOf="@+id/card_balance" />
+        app:layout_constraintTop_toBottomOf="@+id/card_summary" />
 
     <Button
         android:id="@+id/btn_ver_historial"
@@ -89,14 +152,33 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="VER HISTORIAL"
         android:padding="12dp"
+        android:text="VER HISTORIAL"
         app:icon="@drawable/ic_agregar"
         app:layout_constraintEnd_toEndOf="@+id/card_balance"
         app:layout_constraintStart_toEndOf="@+id/btn_agregar_transaccion"
         app:layout_constraintTop_toTopOf="@+id/btn_agregar_transaccion" />
 
+    <Button
+        android:id="@+id/btnEstadistica"
+        style="@style/BotonAgregarHistorial"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        android:text="VER ESTADÍSTICAS DE GASTO"
+        app:icon="@drawable/ic_grafico"
+        app:layout_constraintEnd_toEndOf="@id/card_summary"
+        app:layout_constraintStart_toStartOf="@id/card_summary"
+        app:layout_constraintTop_toBottomOf="@id/btn_agregar_transaccion" />
 
-
-
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/btnEstadistica"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

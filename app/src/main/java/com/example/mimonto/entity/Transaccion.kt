@@ -1,14 +1,16 @@
 package com.example.mimonto.entity
 
-import java.util.Date
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-data class Transaccion (
-    val id: String,
-    val tvMonto: Double,
-    val tvTipo: String,
-    val tvCategoria: String,
-    val tvDescripcion: String,
-    val tvFecha: Date
-
+@Entity(tableName = "transacciones")
+data class Transaccion(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0,
+    var monto: Double,
+    var tipo: String,
+    var categoria: String,
+    var descripcion: String,
+    var fecha: String
 )
 

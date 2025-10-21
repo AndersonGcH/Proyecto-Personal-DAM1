@@ -1,53 +1,71 @@
 package com.example.mimonto
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.mimonto.adapter.HistorialAdapter
+import com.example.mimonto.adapter.TransaccionAdapter
+import com.example.mimonto.data.DBHelper
+import com.example.mimonto.databinding.ActivityHistorialBinding
 import com.example.mimonto.entity.Transaccion
-import java.util.Date
+import kotlinx.coroutines.launch
 
 class HistorialActivity : AppCompatActivity() {
-    private lateinit var rvHistorial: RecyclerView
-    private lateinit var historialAdapter: HistorialAdapter
-    private var listaDeTransacciones = mutableListOf<Transaccion>()
+    private lateinit var binding: ActivityHistorialBinding
+    private lateinit var db: DBHelper
+    private lateinit var adapter: TransaccionAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_historial)
-        cargarDatosDeEjemplo()
+        binding = ActivityHistorialBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        rvHistorial = findViewById(R.id.rvHistorial)
+        db = DBHelper.getDatabase(this)
 
-        rvHistorial.layoutManager = LinearLayoutManager(this)
+        setupRecyclerView()
 
-        historialAdapter = HistorialAdapter(listaDeTransacciones)
-        rvHistorial.adapter = historialAdapter
+        binding.btnRegresar.setOnClickListener {
+            val intent = Intent(this@HistorialActivity, PrincipalActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
-    private fun cargarDatosDeEjemplo() {
-        listaDeTransacciones.add(
-            Transaccion(
-                id = "1",
-                tvMonto = 50.75,
-                tvTipo = "Gasto",
-                tvCategoria = "Alimentación",
-                tvDescripcion = "Almuerzo en restaurante",
-                tvFecha = Date()
-            )
-        )
-        listaDeTransacciones.add(
-            Transaccion(
-                id = "2",
-                tvMonto = 1130.00,
-                tvTipo = "Ingreso",
-                tvCategoria = "Salario",
-                tvDescripcion = "Salario trabajo",
-                tvFecha = Date()
-            )
-        )
+
+    override fun onResume() {
+        super.onResume()
+        cargarTransacciones()
+    }
+    private fun setupRecyclerView() {
+        adapter = TransaccionAdapter(emptyList()) { transaccion ->
+            mostrarDialogoDeEliminacion(transaccion)
+        }
+        binding.rvHistorial.adapter = adapter
+        binding.rvHistorial.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun cargarTransacciones() {
+        lifecycleScope.launch {
+            val listaTransacciones = db.transaccionDao().obtenerTodas()
+            adapter.actualizarLista(listaTransacciones.reversed())
+        }
+    }
+    private fun mostrarDialogoDeEliminacion(transaccion: Transaccion) {
+        AlertDialog.Builder(this)
+            .setTitle("Eliminar Transacción")
+            .setMessage("¿Seguro de eliminar '${transaccion.descripcion}'? Esta acción no se puede deshacer.")
+            .setPositiveButton("Eliminar") { _, _ ->
+                eliminarTransaccion(transaccion)
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun eliminarTransaccion(transaccion: Transaccion) {
+        lifecycleScope.launch {
+            db.transaccionDao().eliminar(transaccion)
+            cargarTransacciones()
+        }
     }
 }
