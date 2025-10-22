@@ -11,6 +11,6 @@ data class Transaccion(
     var tipo: String,
     var categoria: String,
     var descripcion: String,
-    var fecha: String
+    var fecha: String,
+    var usuarioId: Int
 )
-

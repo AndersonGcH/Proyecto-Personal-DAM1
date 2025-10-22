@@ -1,16 +1,19 @@
 package com.example.mimonto
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.mimonto.data.DBHelper
+import com.example.mimonto.data.SessionManager
 import com.example.mimonto.databinding.ActivityLoginBinding
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var db: DBHelper
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,9 +21,11 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         db = DBHelper.getDatabase(this)
+        sessionManager = SessionManager(this)
 
         setupListeners()
     }
+
     private fun setupListeners() {
         binding.btnInicio.setOnClickListener {
             iniciarSesion()
@@ -31,6 +36,7 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
     private fun iniciarSesion() {
         val correo = binding.tietCorreo.text.toString().trim()
         val clave = binding.tietClave.text.toString().trim()
@@ -47,6 +53,7 @@ class LoginActivity : AppCompatActivity() {
                 if (usuario == null) {
                     Toast.makeText(this@LoginActivity, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show()
                 } else {
+                    sessionManager.saveAuthToken(usuario.id)
                     Toast.makeText(this@LoginActivity, "Bienvenido ${usuario.nombres}", Toast.LENGTH_SHORT).show()
 
                     val intent = Intent(this@LoginActivity, PrincipalActivity::class.java)

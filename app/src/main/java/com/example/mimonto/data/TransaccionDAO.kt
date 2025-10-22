@@ -19,23 +19,24 @@ interface TransaccionDAO {
     @Update
     suspend fun actualizar(transaccion: Transaccion)
 
-    @Query("SELECT * FROM transacciones ORDER BY id DESC")
-    suspend fun obtenerTodas(): List<Transaccion>
+    @Query("SELECT * FROM transacciones WHERE usuarioId = :usuarioId ORDER BY id DESC")
+    suspend fun obtenerTodas(usuarioId: Int): List<Transaccion>
 
     @Query("SELECT * FROM transacciones WHERE id = :transaccionId")
     suspend fun obtenerPorId(transaccionId: Int): Transaccion?
 
     @Delete
     suspend fun eliminar(transaccion: Transaccion)
-    @Query("SELECT SUM(monto) FROM transacciones WHERE tipo = :tipo")
-    suspend fun obtenerSumaPorTipo(tipo: String): Double?
+
+    @Query("SELECT SUM(monto) FROM transacciones WHERE tipo = :tipo AND usuarioId = :usuarioId")
+    suspend fun obtenerSumaPorTipo(tipo: String, usuarioId: Int): Double?
+
     @Query("""
     SELECT categoria, SUM(monto) as total
     FROM transacciones
-    WHERE tipo = 'Gasto'
+    WHERE tipo = 'Gasto' AND usuarioId = :usuarioId
     GROUP BY categoria
     HAVING total > 0
 """)
-
-    suspend fun obtenerGastosAgrupadosPorCategoria(): List<GastoPorCategoria>
+    suspend fun obtenerGastosAgrupadosPorCategoria(usuarioId: Int): List<GastoPorCategoria>
 }

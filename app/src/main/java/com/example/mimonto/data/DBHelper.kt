@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.mimonto.entity.Transaccion
 import com.example.mimonto.entity.Usuario
 
-@Database(entities = [Usuario::class, Transaccion::class], version = 2)
+@Database(entities = [Usuario::class, Transaccion::class], version = 3)
 abstract class DBHelper : RoomDatabase() {
     abstract fun usuarioDao(): UsuarioDAO
     abstract fun transaccionDao(): TransaccionDAO

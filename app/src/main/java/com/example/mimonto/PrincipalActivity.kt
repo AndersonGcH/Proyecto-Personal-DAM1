@@ -5,13 +5,16 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.mimonto.data.DBHelper
+import com.example.mimonto.data.SessionManager
 import com.example.mimonto.databinding.ActivityPrincipalBinding
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
+import java.util.Locale
 
 class PrincipalActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPrincipalBinding
     private lateinit var db: DBHelper
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,6 +22,7 @@ class PrincipalActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         db = DBHelper.getDatabase(this)
+        sessionManager = SessionManager(this)
         setupListeners()
     }
 
@@ -26,6 +30,7 @@ class PrincipalActivity : AppCompatActivity() {
         super.onResume()
         actualizarUI()
     }
+
     private fun setupListeners() {
         binding.btnAgregarTransaccion.setOnClickListener {
             val intent = Intent(this, AgregarActivity::class.java)
@@ -53,17 +58,21 @@ class PrincipalActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun actualizarUI() {
         lifecycleScope.launch {
-            val totalIngresos = db.transaccionDao().obtenerSumaPorTipo("Ingreso") ?: 0.0
-            val totalGastos = db.transaccionDao().obtenerSumaPorTipo("Gasto") ?: 0.0
-            val balance = totalIngresos - totalGastos
+            val userId = sessionManager.getUserId()
+            if (userId != -1) {
+                val totalIngresos = db.transaccionDao().obtenerSumaPorTipo("Ingreso", userId) ?: 0.0
+                val totalGastos = db.transaccionDao().obtenerSumaPorTipo("Gasto", userId) ?: 0.0
+                val balance = totalIngresos - totalGastos
 
-            val format = NumberFormat.getCurrencyInstance(java.util.Locale("es", "PE"))
+                val format = NumberFormat.getCurrencyInstance(Locale("es", "PE"))
 
-            binding.tvTotalIngresos.text = format.format(totalIngresos)
-            binding.tvTotalGastos.text = format.format(totalGastos)
-            binding.tvBalance.text = format.format(balance)
+                binding.tvTotalIngresos.text = format.format(totalIngresos)
+                binding.tvTotalGastos.text = format.format(totalGastos)
+                binding.tvBalance.text = format.format(balance)
+            }
         }
     }
 }

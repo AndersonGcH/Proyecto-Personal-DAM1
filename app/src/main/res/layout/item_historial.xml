@@ -66,6 +66,5 @@
             android:textStyle="bold"
             tools:text="+ S/ 3,500.00"
             tools:textColor="#4CAF50" />
-
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

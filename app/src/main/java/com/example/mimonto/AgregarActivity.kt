@@ -6,14 +6,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.mimonto.data.DBHelper
+import com.example.mimonto.data.SessionManager
 import com.example.mimonto.databinding.ActivityAgregarBinding
 import com.example.mimonto.entity.Transaccion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+
 class AgregarActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAgregarBinding
     private lateinit var db: DBHelper
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +24,7 @@ class AgregarActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         db = DBHelper.getDatabase(this)
+        sessionManager = SessionManager(this)
 
         binding.btnGuardarTransaccion.setOnClickListener {
             guardarTransaccion()
@@ -33,6 +37,7 @@ class AgregarActivity : AppCompatActivity() {
         }
 
     }
+
     private fun guardarTransaccion() {
         val montoStr = binding.tietMonto.text.toString().trim()
         val descripcion = binding.tietDescripcion.text.toString().trim()
@@ -63,22 +68,24 @@ class AgregarActivity : AppCompatActivity() {
 
         val tipo = if (binding.rgTipoTransaccion.checkedRadioButtonId == R.id.rbIngreso) "Ingreso" else "Gasto"
         val fechaActual = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date())
+        val userId = sessionManager.getUserId()
 
         val nuevaTransaccion = Transaccion(
             monto = monto,
             descripcion = descripcion,
             categoria = categoria,
             tipo = tipo,
-            fecha = fechaActual
+            fecha = fechaActual,
+            usuarioId = userId
         )
 
-        lifecycleScope.launch (Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             db.transaccionDao().agregar(nuevaTransaccion)
             runOnUiThread {
                 Toast.makeText(this@AgregarActivity, "Transacción Guardada", Toast.LENGTH_LONG).show()
-                    val intent = Intent(this@AgregarActivity, PrincipalActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                val intent = Intent(this@AgregarActivity, PrincipalActivity::class.java)
+                startActivity(intent)
+                finish()
             }
         }
     }

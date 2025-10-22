@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mimonto.adapter.TransaccionAdapter
 import com.example.mimonto.data.DBHelper
+import com.example.mimonto.data.SessionManager
 import com.example.mimonto.databinding.ActivityHistorialBinding
 import com.example.mimonto.entity.Transaccion
 import kotlinx.coroutines.launch
@@ -32,6 +33,7 @@ class HistorialActivity : AppCompatActivity() {
     private lateinit var db: DBHelper
     private lateinit var adapter: TransaccionAdapter
     private var listaTransaccionesCompleta: List<Transaccion> = emptyList()
+    private lateinit var sessionManager: SessionManager
 
     companion object {
         private const val REQUEST_CODE_PERMISSIONS = 101
@@ -43,6 +45,7 @@ class HistorialActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         db = DBHelper.getDatabase(this)
+        sessionManager = SessionManager(this)
 
         setupRecyclerView()
 
@@ -74,8 +77,11 @@ class HistorialActivity : AppCompatActivity() {
 
     private fun cargarTransacciones() {
         lifecycleScope.launch {
-            listaTransaccionesCompleta = db.transaccionDao().obtenerTodas()
-            adapter.actualizarLista(listaTransaccionesCompleta.reversed())
+            val userId = sessionManager.getUserId()
+            if (userId != -1) {
+                listaTransaccionesCompleta = db.transaccionDao().obtenerTodas(userId)
+                adapter.actualizarLista(listaTransaccionesCompleta.reversed())
+            }
         }
     }
 
@@ -115,6 +121,7 @@ class HistorialActivity : AppCompatActivity() {
         title.textSize = 20f
         title.isFakeBoldText = true
         canvas.drawText("Historial de Transacciones", 40f, 50f, title)
+
         paint.textSize = 12f
         paint.isFakeBoldText = true
         var y = 80f
@@ -128,7 +135,7 @@ class HistorialActivity : AppCompatActivity() {
         paint.isFakeBoldText = false
 
         for (transaccion in transacciones) {
-            if (y > 800) {
+            if (y > 800) { 
                 document.finishPage(page)
                 page = document.startPage(pageInfo)
                 canvas = page.canvas
@@ -173,7 +180,7 @@ class HistorialActivity : AppCompatActivity() {
             document.close()
 
             if (pdfUri != null) {
-                Toast.makeText(this, "PDF guardado", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "PDF guardado.", Toast.LENGTH_LONG).show()
                 abrirPdf(pdfUri!!)
             } else {
                 Toast.makeText(this, "Error al obtener URI del PDF", Toast.LENGTH_LONG).show()
