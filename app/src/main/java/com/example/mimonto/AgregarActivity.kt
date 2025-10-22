@@ -50,7 +50,6 @@ class AgregarActivity : AppCompatActivity() {
             Toast.makeText(this, "La categoría no debe tener más de 20 caracteres", Toast.LENGTH_SHORT).show()
             return
         }
-
         val monto = montoStr.toDoubleOrNull()
         if (monto == null || monto <= 0) {
             Toast.makeText(this, "Ingresa un monto válido", Toast.LENGTH_SHORT).show()

@@ -21,6 +21,10 @@ interface TransaccionDAO {
 
     @Query("SELECT * FROM transacciones ORDER BY id DESC")
     suspend fun obtenerTodas(): List<Transaccion>
+
+    @Query("SELECT * FROM transacciones WHERE id = :transaccionId")
+    suspend fun obtenerPorId(transaccionId: Int): Transaccion?
+
     @Delete
     suspend fun eliminar(transaccion: Transaccion)
     @Query("SELECT SUM(monto) FROM transacciones WHERE tipo = :tipo")

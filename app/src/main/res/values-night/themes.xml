@@ -30,7 +30,6 @@
         <item name="cornerRadius">16dp</item>
     </style>
 
-
     <style name="BotonAgregarHistorial" parent="Widget.Material3.Button.ElevatedButton">
         <item name="android:backgroundTint">@android:color/white</item>
         <item name="android:textColor">@color/black</item>

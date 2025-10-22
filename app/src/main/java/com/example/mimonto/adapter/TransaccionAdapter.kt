@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mimonto.entity.Transaccion
 class TransaccionAdapter(
     private var transacciones: List<Transaccion>,
-    private val onTransaccionLongClick: (Transaccion) -> Unit
+    private val onTransaccionClick: (Transaccion) -> Unit
 ) : RecyclerView.Adapter<TransaccionAdapter.TransaccionViewHolder>() {
 
     inner class TransaccionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -36,9 +36,8 @@ class TransaccionAdapter(
                 viewTipoIndicador.setBackgroundColor(android.graphics.Color.parseColor("#D32F2F"))
             }
 
-            itemView.setOnLongClickListener {
-                onTransaccionLongClick(transaccion)
-                true
+            itemView.setOnClickListener {
+                onTransaccionClick(transaccion)
             }
         }
     }
